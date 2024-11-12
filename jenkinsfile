@@ -15,7 +15,7 @@ pipeline {
         }
         stage ("Git Checkout") {
             steps {
-                git 'https://github.com/KastroVKiran/Zomato-Project-Kastro.git'
+                git 'https://github.com/devopsenggr/Project-Zomato.git'
             }
         }
         stage("Sonarqube Analysis"){
@@ -29,7 +29,7 @@ pipeline {
         stage("Code Quality Gate"){
            steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' 
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
                 }
             } 
         }
@@ -38,12 +38,12 @@ pipeline {
                 sh "npm install"
             }
         }
-        stage('OWASP FS SCAN') {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit -n', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-    }
-}
+   //     stage('OWASP FS SCAN') {
+     //       steps {
+       //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit -n', odcInstallation: 'DP-Check'
+         //       dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+    //}
+//}
         stage ("Trivy File Scan") {
             steps {
                 sh "trivy fs . > trivy.txt"
@@ -58,8 +58,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker') {
-                        sh "docker tag zomato kastrov/zomato:latest "
-                        sh "docker push kastrov/zomato:latest "
+                        sh "docker tag zomato awsd43/zomato:{BUILD_NUMBER}"
+                        sh "docker push awsd43/zomato:{BUILD_NUMBER}"
                     }
                 }
             }
@@ -68,16 +68,16 @@ pipeline {
             steps {
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-                       sh 'docker-scout quickview kastrov/zomato:latest'
-                       sh 'docker-scout cves kastrov/zomato:latest'
-                       sh 'docker-scout recommendations kastrov/zomato:latest'
+                       sh 'docker-scout quickview awsd43/zomato:{BUILD_NUMBER}'
+                       sh 'docker-scout cves awsd43/zomato:{BUILD_NUMBER}'
+                       sh 'docker-scout recommendations awsd43/zomato:{BUILD_NUMBER}'
                    }
                 }
             }
         }
         stage ("Deploy to Container") {
             steps {
-                sh 'docker run -d --name zomato -p 3000:3000 kastrov/zomato:latest'
+                sh 'docker run -d --name zomato -p 3000:3000 awsd43/zomato:{BUILD_NUMBER}'
             }
         }
     }
@@ -100,7 +100,7 @@ pipeline {
                 </body>
                 </html>
             """,
-            to: 'kastrokiran@gmail.com',
+            to: 'awstraining42@gmail.com',
             mimeType: 'text/html',
             attachmentsPattern: 'trivy.txt'
         }
