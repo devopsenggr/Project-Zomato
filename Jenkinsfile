@@ -58,8 +58,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker') {
-                        sh "docker tag zomato awsd43/zomato:{BUILD_NUMBER}"
-                        sh "docker push awsd43/zomato:{BUILD_NUMBER}"
+                        sh "docker tag zomato awsd43/zomato:${BUILD_NUMBER}"
+                        sh "docker push awsd43/zomato:${BUILD_NUMBER}"
                     }
                 }
             }
@@ -68,16 +68,16 @@ pipeline {
             steps {
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-                       sh 'docker-scout quickview awsd43/zomato:{BUILD_NUMBER}'
-                       sh 'docker-scout cves awsd43/zomato:{BUILD_NUMBER}'
-                       sh 'docker-scout recommendations awsd43/zomato:{BUILD_NUMBER}'
+                       sh 'docker-scout quickview awsd43/zomato:${BUILD_NUMBER}'
+                       sh 'docker-scout cves awsd43/zomato:${BUILD_NUMBER}'
+                       sh 'docker-scout recommendations awsd43/zomato:${BUILD_NUMBER}'
                    }
                 }
             }
         }
         stage ("Deploy to Container") {
             steps {
-                sh 'docker run -d --name zomato -p 3000:3000 awsd43/zomato:{BUILD_NUMBER}'
+                sh 'docker run -d --name zomato -p 3000:3000 awsd43/zomato:${BUILD_NUMBER}'
             }
         }
     }
