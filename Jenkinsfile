@@ -58,8 +58,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker') {
-                        sh "docker tag zomato awsd43/zomato:${BUILD_NUMBER}"
-                        sh "docker push awsd43/zomato:${BUILD_NUMBER}"
+                        sh "docker tag zomato awsd43/zomato:latest"
+                        sh "docker push awsd43/zomato:latest"
                     }
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
         //}
         stage ("Deploy to Container") {
             steps {
-                sh 'docker run -d -p 3000:3000 awsd43/zomato:${BUILD_NUMBER}'
+                sh 'docker run -d -p 3000:3000 awsd43/zomato:latest'
             }
         }
     }
