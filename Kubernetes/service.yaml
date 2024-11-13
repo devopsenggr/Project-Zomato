@@ -5,7 +5,7 @@ metadata:
   labels:
     app: zomato
 spec:
-  type: loadbalancer
+  type: LoadBalancer
   ports:
   - port: 3000
     targetPort: 3000
